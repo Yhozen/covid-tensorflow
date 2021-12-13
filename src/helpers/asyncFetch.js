@@ -1,5 +1,4 @@
-const scaler = require("./scaler")
-const { transformToTimesteps } = require("./model")
+import scaler from "./scaler"
 
 const fetchCases = async () => {
   const DataFrame = await import("dataframe-js").then(mod => mod.DataFrame)
@@ -17,7 +16,7 @@ const fetchCases = async () => {
   return [cases, lastUpdate]
 }
 
-const loadModel = async () => {
+export const loadModel = async () => {
   const tf = await import("@tensorflow/tfjs")
   const model = await tf.loadLayersModel("./model/model.json")
 
@@ -38,12 +37,19 @@ const data = [
     [6190.0],
   ],
 ]
-exports.trainModel = async () => {
-  const [[cases, lastUpdate], model] = await Promise.all([
+export const trainModel = async () => {
+  // load all at the same time
+  const [
+    [cases, lastUpdate],
+    model,
+    tf,
+    transformToTimesteps,
+  ] = await Promise.all([
     fetchCases(),
     loadModel(),
+    import("@tensorflow/tfjs"),
+    import("./model").then(mod => mod.transformToTimesteps),
   ])
-  const tf = await import("@tensorflow/tfjs")
 
   console.log(cases, { lastUpdate })
   const [X, y] = transformToTimesteps(scaler.transform2(cases), 10, 7)
@@ -72,6 +78,3 @@ exports.trainModel = async () => {
   const finalPrediction = scaler.inverseTransform(prediction)
   console.log({ finalPrediction })
 }
-
-exports.loadModel = loadModel
-exports.fetchCases = fetchCases
