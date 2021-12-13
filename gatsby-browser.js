@@ -7,10 +7,18 @@
 // You can delete this file if you're not using it
 import React from "react"
 import { QueryClient, QueryClientProvider } from "react-query"
+import { GeistProvider, CssBaseline } from "@geist-ui/react"
+
+import "./src/styles/index.css"
 
 // Create a client
 const queryClient = new QueryClient()
 
 export const wrapRootElement = ({ element }) => (
-  <QueryClientProvider client={queryClient}>{element}</QueryClientProvider>
+  <QueryClientProvider client={queryClient}>
+    <GeistProvider>
+      <CssBaseline />
+      {element}
+    </GeistProvider>
+  </QueryClientProvider>
 )

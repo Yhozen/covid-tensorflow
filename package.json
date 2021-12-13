@@ -5,6 +5,7 @@
   "version": "0.1.0",
   "author": "Kyle Mathews <mathews.kyle@gmail.com>",
   "dependencies": {
+    "@geist-ui/react": "^2.2.0",
     "@tensorflow/tfjs": "^3.7.0",
     "dataframe-js": "^1.4.4",
     "dayjs": "^1.10.5",
