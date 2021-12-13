@@ -1,13 +1,14 @@
-const DataFrame = require("dataframe-js").DataFrame
-const tf = require("@tensorflow/tfjs")
 const scaler = require("./scaler")
 const { transformToTimesteps } = require("./model")
 
 const fetchCases = async () => {
+  const DataFrame = await import("dataframe-js").then(mod => mod.DataFrame)
+
   const df = await DataFrame.fromCSV(
     "https://covid.ourworldindata.org/data/owid-covid-data.csv"
   )
 
+  console.log(df)
   const filtered = df.filter(row => row.get("iso_code") === "CHL")
 
   const lastUpdate = filtered.select("date").toArray().slice(-1)
@@ -17,6 +18,7 @@ const fetchCases = async () => {
 }
 
 const loadModel = async () => {
+  const tf = await import("@tensorflow/tfjs")
   const model = await tf.loadLayersModel("./model/model.json")
 
   return model
@@ -41,7 +43,9 @@ exports.trainModel = async () => {
     fetchCases(),
     loadModel(),
   ])
-  console.log(cases)
+  const tf = await import("@tensorflow/tfjs")
+
+  console.log(cases, { lastUpdate })
   const [X, y] = transformToTimesteps(scaler.transform2(cases), 10, 7)
   console.log(X.shape, y.shape)
   model.summary()
@@ -52,7 +56,9 @@ exports.trainModel = async () => {
     metrics: ["mse"],
   })
   const yReshaped = y.reshape([y.shape[0], y.shape[1]])
-  console.log(yReshaped.shape, "holashape")
+  console.log(yReshaped.shape, "shape")
+
+  console.log({ yReshaped })
 
   const info = await model.fit(X, yReshaped, {
     epochs: 40,
@@ -64,7 +70,7 @@ exports.trainModel = async () => {
   const prediction = await model.predict(a).array()
 
   const finalPrediction = scaler.inverseTransform(prediction)
-  console.log(finalPrediction)
+  console.log({ finalPrediction })
 }
 
 exports.loadModel = loadModel
