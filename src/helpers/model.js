@@ -1,5 +1,4 @@
-import * as tf from "@tensorflow/tfjs"
-
+const tf = require("@tensorflow/tfjs")
 // def transform_to_timesteps(data, seq_length = 3, seq_out_length = 1):
 //   dataX = []
 //   dataY = []
@@ -12,11 +11,7 @@ import * as tf from "@tensorflow/tfjs"
 //   X = np.array(dataX)
 //   return X, numpy.array(dataY)
 
-export const transformToTimesteps = (
-  data,
-  seq_length = 10,
-  seq_out_length = 7
-) => {
+exports.transformToTimesteps = (data, seq_length = 10, seq_out_length = 7) => {
   const dataX = []
   const dataY = []
   for (let i = 0; i < data.length - seq_length - (seq_out_length - 1); i++) {
