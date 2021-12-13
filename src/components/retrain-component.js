@@ -1,6 +1,6 @@
 import React, { useState } from "react"
 import { useQuery } from "react-query"
-import { Button } from "@geist-ui/react"
+import { Button, Text } from "@geist-ui/react"
 import { trainModel } from "../helpers/trainModel"
 
 const DataComponent = ({ covidData }) => {
@@ -17,7 +17,16 @@ const DataComponent = ({ covidData }) => {
   }
 
   // We can assume by this point that `isSuccess === true`
-  return <p>{JSON.stringify(data, null, 2)}</p>
+  return (
+    <>
+      <Text h5> cases next days:</Text>
+      <p>
+        {data[0].map(cases => (
+          <span>{Math.round(cases)} </span>
+        ))}
+      </p>
+    </>
+  )
 }
 export const RetrainComponent = ({ covidData }) => {
   const [retrain, setRetrain] = useState(false)
